@@ -163,9 +163,29 @@ Set `ANTHROPIC_API_KEY` in your `.env` file:
 ANTHROPIC_API_KEY=sk-ant-...
 ```
 
-### Option B: OAuth (interactive login)
+### Option B: OAuth (interactive login — recommended for Pro/Max subscribers)
 
-Leave `ANTHROPIC_API_KEY` empty. On first Claude launch, you'll be prompted to authenticate interactively via the browser. The auth token is stored in the `claude-home` Docker volume and persists across container restarts.
+Leave `ANTHROPIC_API_KEY` empty. On first Claude launch, you'll be prompted to authenticate interactively via the browser.
+
+**Auth persistence**: The container sets `CLAUDE_CONFIG_DIR=/home/dev/.claude` which tells Claude Code to store ALL config files (including auth state) inside `~/.claude/` — the Docker volume. This means:
+
+- OAuth tokens (access + refresh) persist in `~/.claude/.credentials.json`
+- Config and onboarding state persist in `~/.claude/.claude.json`
+- After initial login, **you stay logged in across container rebuilds** — Claude uses the long-lived refresh token (valid for months) to automatically renew the access token, just like on desktop
+
+No re-authentication needed after `docker compose build` — the `claude-home` volume keeps everything.
+
+### How `CLAUDE_CONFIG_DIR` Works
+
+Without `CLAUDE_CONFIG_DIR`, Claude stores config in two separate locations:
+- `~/.claude.json` (container filesystem — **lost on rebuild**)
+- `~/.claude/.credentials.json` (Docker volume — persists)
+
+With `CLAUDE_CONFIG_DIR=/home/dev/.claude`, Claude stores **everything** inside `~/.claude/`:
+- `~/.claude/.claude.json` (Docker volume — **persists**)
+- `~/.claude/.credentials.json` (Docker volume — **persists**)
+
+This is the [official approach endorsed by Anthropic](https://github.com/anthropics/claude-code/issues/1736) for running Claude Code in Docker.
 
 ## Init Wizard
 
@@ -427,12 +447,14 @@ docker attach claude-dev                # drops directly into cl session manager
 ### What Happens on Start (Entrypoint)
 
 1. Sources `~/.bashrc` for PATH setup
-2. Configures git identity from `GIT_USER_NAME` / `GIT_USER_EMAIL` env vars
-3. Runs `gh auth login` if `GITHUB_TOKEN` is set
-4. Starts `claude-gc` background loop (every 15 minutes)
-5. If first run (no marker file) + interactive terminal → launches init wizard
-6. If marker exists but packages are missing (container rebuilt) → background reinstall
-7. If `CLAUDE_AUTOSTART=1` → `exec cl`, otherwise → `exec bash`
+2. Syncs `lastOnboardingVersion` in config to match installed Claude version (prevents re-onboarding after Claude updates)
+3. Cleans up stale config files from previous entrypoint versions
+4. Configures git identity from `GIT_USER_NAME` / `GIT_USER_EMAIL` env vars
+5. Runs `gh auth login` if `GITHUB_TOKEN` is set
+6. Starts `claude-gc` background loop (every 15 minutes)
+7. If first run (no marker file) + interactive terminal → launches init wizard
+8. If marker exists but packages are missing (container rebuilt) → background reinstall
+9. If `CLAUDE_AUTOSTART=1` → `exec cl`, otherwise → `exec bash`
 
 ### Stopping
 
@@ -558,9 +580,12 @@ The container shell has these pre-configured:
 | Problem | Solution |
 |---------|----------|
 | `claude: command not found` | Run `. ~/.nvm/nvm.sh` to load Node.js |
+| Login/onboarding screen after rebuild | Check `CLAUDE_CONFIG_DIR` is set: `echo $CLAUDE_CONFIG_DIR` should show `/home/dev/.claude`. If not, add it to your `docker-compose.yml` environment section |
+| "Configuration file not found" warning | Run `cp ~/.claude/backups/.claude.json.backup.* ~/.claude/.claude.json` to restore from Claude's automatic backup |
 | Init wizard doesn't appear | Run `init-wizard` manually |
 | Wizard shows garbled text | Your terminal doesn't support whiptail — the wizard will fall back to text mode |
 | Packages lost after rebuild | Check that `claude-home` volume exists: `docker volume ls` |
+| Auth lost after `docker compose down -v` | The `-v` flag deletes volumes including auth. You'll need to re-login. Use `down` without `-v` to preserve auth |
 | Permission denied on `/work` | Check host directory permissions match UID 1000 (`id -u` on host) |
 | Port already in use | Change `PORT_DEV1`/`PORT_DEV2`/`PORT_DEV3` in `.env` |
 | Out of memory | Increase `MEMORY_LIMIT` in `.env` (default: 8g) |
