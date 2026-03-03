@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: claude-docker:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Smoke tests
+        run: |
+          echo "=== Running smoke tests ==="
+
+          # Test: dev user exists with UID 1000
+          uid=$(docker run --rm claude-docker:test id -u dev)
+          [ "$uid" = "1000" ] && echo "PASS: dev user UID is 1000" || { echo "FAIL: dev user UID is $uid"; exit 1; }
+
+          # Test: node is available
+          docker run --rm claude-docker:test bash -lc "node --version" | grep -q "^v" \
+            && echo "PASS: node is available" || { echo "FAIL: node not found"; exit 1; }
+
+          # Test: claude CLI is available
+          docker run --rm claude-docker:test bash -lc "claude --version" | grep -q "." \
+            && echo "PASS: claude CLI is available" || { echo "FAIL: claude CLI not found"; exit 1; }
+
+          # Test: essential tools available
+          for tool in git tmux curl; do
+            docker run --rm claude-docker:test which $tool > /dev/null \
+              && echo "PASS: $tool is available" || { echo "FAIL: $tool not found"; exit 1; }
+          done
+
+          # Test: CLAUDE_CONFIG_DIR is set correctly
+          config_dir=$(docker run --rm claude-docker:test bash -lc 'echo $CLAUDE_CONFIG_DIR')
+          [ "$config_dir" = "/home/dev/.claude" ] \
+            && echo "PASS: CLAUDE_CONFIG_DIR is set" || { echo "FAIL: CLAUDE_CONFIG_DIR is '$config_dir'"; exit 1; }
+
+          # Test: entrypoint exists and is executable
+          docker run --rm claude-docker:test test -x /usr/local/bin/docker-entrypoint.sh \
+            && echo "PASS: entrypoint is executable" || { echo "FAIL: entrypoint not executable"; exit 1; }
+
+          echo "=== All smoke tests passed ==="
