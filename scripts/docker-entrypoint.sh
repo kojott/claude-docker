@@ -40,6 +40,27 @@ if [ -f "$CLAUDE_JSON_VOL" ]; then
     fi
 fi
 
+# Export OAuth token to bypass login screen on container restart.
+# Claude Code shows the onboarding/login flow even when credentials are
+# valid on the volume. Setting ANTHROPIC_AUTH_TOKEN makes Claude use the
+# token directly, skipping the interactive login.
+if [ -z "$ANTHROPIC_API_KEY" ] && [ -z "$ANTHROPIC_AUTH_TOKEN" ]; then
+    CREDS_FILE="$HOME/.claude/.credentials.json"
+    if [ -f "$CREDS_FILE" ]; then
+        OAUTH_TOKEN=$(node -e "
+            try {
+                const c = JSON.parse(require('fs').readFileSync('$CREDS_FILE','utf8'));
+                const t = c.claudeAiOauth;
+                if (t && t.accessToken && Date.now() < t.expiresAt)
+                    process.stdout.write(t.accessToken);
+            } catch {}
+        " 2>/dev/null || true)
+        if [ -n "$OAUTH_TOKEN" ]; then
+            export ANTHROPIC_AUTH_TOKEN="$OAUTH_TOKEN"
+        fi
+    fi
+fi
+
 # Configure git identity from env vars
 if [ -n "$GIT_USER_NAME" ]; then
     git config --global user.name "$GIT_USER_NAME"
