@@ -27,6 +27,19 @@ else
     ln -sf "$CLAUDE_JSON_VOL" "$CLAUDE_JSON"
 fi
 
+# Sync lastOnboardingVersion to prevent re-onboarding after Claude updates.
+# Claude Code re-shows the welcome screen when the running version differs
+# from lastOnboardingVersion in .claude.json.
+if [ -f "$CLAUDE_JSON_VOL" ]; then
+    CLAUDE_VER=$(claude --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || true)
+    if [ -n "$CLAUDE_VER" ]; then
+        STORED_VER=$(grep -o '"lastOnboardingVersion"[[:space:]]*:[[:space:]]*"[^"]*"' "$CLAUDE_JSON_VOL" 2>/dev/null | grep -o '[0-9][0-9.]*' || true)
+        if [ -n "$STORED_VER" ] && [ "$STORED_VER" != "$CLAUDE_VER" ]; then
+            sed -i "s/\"lastOnboardingVersion\"[[:space:]]*:[[:space:]]*\"[^\"]*\"/\"lastOnboardingVersion\": \"$CLAUDE_VER\"/" "$CLAUDE_JSON_VOL"
+        fi
+    fi
+fi
+
 # Configure git identity from env vars
 if [ -n "$GIT_USER_NAME" ]; then
     git config --global user.name "$GIT_USER_NAME"
