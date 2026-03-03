@@ -1,0 +1,28 @@
+#!/bin/bash
+# Dynamic MOTD script
+# Only show on interactive login, not in tmux panes or scripts
+
+[[ $- != *i* ]] && return
+[ -n "$TMUX" ] && return
+
+echo ""
+echo -e "  \033[1mCLAUDE DOCKER\033[0m"
+echo ""
+
+# Count sessions
+TOTAL=$(tmux list-sessions 2>/dev/null | grep -cE "^(cl-|claude-)" || true)
+ATTACHED=$(tmux list-sessions 2>/dev/null | grep -E "^(cl-|claude-)" | grep -c "(attached)" || true)
+DETACHED=$(( TOTAL - ATTACHED ))
+
+if [ "$TOTAL" -gt 0 ]; then
+    # Collect project names from session names
+    PROJECTS=$(tmux list-sessions -F '#{session_name}' 2>/dev/null | grep -E "^(cl-|claude-)" | sed 's/^cl-//;s/^claude-//' | sed 's/-wt-.*//;s/-cont-.*//;s/-resume-.*//' | sort -u | head -5 | tr '\n' ', ' | sed 's/,$//' | sed 's/,/, /g')
+
+    echo "  Sessions:  $TOTAL active ($ATTACHED attached, $DETACHED detached)"
+    [ -n "$PROJECTS" ] && echo "  Projects:  $PROJECTS"
+    echo ""
+fi
+
+echo "  Type 'cl' to manage sessions"
+echo "  Projects in /work"
+echo ""
