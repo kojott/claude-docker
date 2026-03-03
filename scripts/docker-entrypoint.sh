@@ -5,6 +5,28 @@ set -eo pipefail
 # Source bashrc for PATH setup
 [ -f "$HOME/.bashrc" ] && . "$HOME/.bashrc"
 
+# Persist ~/.claude.json on the volume via symlink
+# Claude Code stores auth (oauthAccount, accountUuid) in ~/.claude.json
+# which lives on the container filesystem and is lost on rebuild.
+# By symlinking to the persistent volume, credentials survive rebuilds.
+CLAUDE_JSON="$HOME/.claude.json"
+CLAUDE_JSON_VOL="$HOME/.claude/claude.json"
+if [ -L "$CLAUDE_JSON" ]; then
+    # Already a symlink — nothing to do
+    :
+elif [ -f "$CLAUDE_JSON" ] && [ ! -f "$CLAUDE_JSON_VOL" ]; then
+    # First time: move existing file to volume, create symlink
+    mv "$CLAUDE_JSON" "$CLAUDE_JSON_VOL"
+    ln -s "$CLAUDE_JSON_VOL" "$CLAUDE_JSON"
+elif [ -f "$CLAUDE_JSON_VOL" ]; then
+    # Rebuild: volume has the file, container has a stale copy or nothing
+    rm -f "$CLAUDE_JSON"
+    ln -s "$CLAUDE_JSON_VOL" "$CLAUDE_JSON"
+else
+    # Fresh install: create symlink so new data goes to volume
+    ln -sf "$CLAUDE_JSON_VOL" "$CLAUDE_JSON"
+fi
+
 # Configure git identity from env vars
 if [ -n "$GIT_USER_NAME" ]; then
     git config --global user.name "$GIT_USER_NAME"
