@@ -11,6 +11,7 @@ services:
       - GIT_USER_NAME=${GIT_USER_NAME:-Claude Dev}
       - GIT_USER_EMAIL=${GIT_USER_EMAIL:-dev@localhost}
       - CLAUDE_AUTOSTART=${CLAUDE_AUTOSTART:-0}
+      - CLAUDE_CONFIG_DIR=/home/dev/.claude
     volumes:
       - ${PROJECTS_DIR:-./projects}:/work
       - claude-home:/home/dev/.claude
@@ -31,10 +32,10 @@ services:
           cpus: "${CPU_LIMIT:-4.0}"
         reservations:
           memory: 2g
-    ports:
-      - "${PORT_DEV1:-3000}:3000"
-      - "${PORT_DEV2:-5173}:5173"
-      - "${PORT_DEV3:-8080}:8080"
+#    ports:
+#      - "${PORT_DEV1:-3000}:3000"
+#      - "${PORT_DEV2:-5173}:5173"
+#      - "${PORT_DEV3:-8080}:8080"
     restart: unless-stopped
 
 volumes:

@@ -5,58 +5,31 @@ set -eo pipefail
 # Source bashrc for PATH setup
 [ -f "$HOME/.bashrc" ] && . "$HOME/.bashrc"
 
-# Persist ~/.claude.json on the volume via symlink
-# Claude Code stores auth (oauthAccount, accountUuid) in ~/.claude.json
-# which lives on the container filesystem and is lost on rebuild.
-# By symlinking to the persistent volume, credentials survive rebuilds.
-CLAUDE_JSON="$HOME/.claude.json"
-CLAUDE_JSON_VOL="$HOME/.claude/claude.json"
-if [ -L "$CLAUDE_JSON" ]; then
-    # Already a symlink — nothing to do
-    :
-elif [ -f "$CLAUDE_JSON" ] && [ ! -f "$CLAUDE_JSON_VOL" ]; then
-    # First time: move existing file to volume, create symlink
-    mv "$CLAUDE_JSON" "$CLAUDE_JSON_VOL"
-    ln -s "$CLAUDE_JSON_VOL" "$CLAUDE_JSON"
-elif [ -f "$CLAUDE_JSON_VOL" ]; then
-    # Rebuild: volume has the file, container has a stale copy or nothing
-    rm -f "$CLAUDE_JSON"
-    ln -s "$CLAUDE_JSON_VOL" "$CLAUDE_JSON"
-else
-    # Fresh install: create symlink so new data goes to volume
-    ln -sf "$CLAUDE_JSON_VOL" "$CLAUDE_JSON"
+# Auth persistence: CLAUDE_CONFIG_DIR=/home/dev/.claude (set in Dockerfile)
+# makes Claude store ALL config inside ~/.claude/ which is on the Docker volume.
+# No symlinks or file copying needed — everything persists naturally.
+
+# Find the active config file (Claude checks .config.json first, then .claude.json)
+CONFIG_FILE=""
+if [ -f "$CLAUDE_CONFIG_DIR/.config.json" ]; then
+    CONFIG_FILE="$CLAUDE_CONFIG_DIR/.config.json"
+elif [ -f "$CLAUDE_CONFIG_DIR/.claude.json" ]; then
+    CONFIG_FILE="$CLAUDE_CONFIG_DIR/.claude.json"
 fi
+
+# Clean up stale symlink/files from previous entrypoint versions
+[ -L "$HOME/.claude.json" ] && rm -f "$HOME/.claude.json"
+[ -f "$CLAUDE_CONFIG_DIR/claude.json" ] && rm -f "$CLAUDE_CONFIG_DIR/claude.json"
 
 # Sync lastOnboardingVersion to prevent re-onboarding after Claude updates.
 # Claude Code re-shows the welcome screen when the running version differs
-# from lastOnboardingVersion in .claude.json.
-if [ -f "$CLAUDE_JSON_VOL" ]; then
+# from lastOnboardingVersion in the config file.
+if [ -n "$CONFIG_FILE" ]; then
     CLAUDE_VER=$(claude --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || true)
     if [ -n "$CLAUDE_VER" ]; then
-        STORED_VER=$(grep -o '"lastOnboardingVersion"[[:space:]]*:[[:space:]]*"[^"]*"' "$CLAUDE_JSON_VOL" 2>/dev/null | grep -o '[0-9][0-9.]*' || true)
+        STORED_VER=$(grep -o '"lastOnboardingVersion"[[:space:]]*:[[:space:]]*"[^"]*"' "$CONFIG_FILE" 2>/dev/null | grep -o '[0-9][0-9.]*' || true)
         if [ -n "$STORED_VER" ] && [ "$STORED_VER" != "$CLAUDE_VER" ]; then
-            sed -i "s/\"lastOnboardingVersion\"[[:space:]]*:[[:space:]]*\"[^\"]*\"/\"lastOnboardingVersion\": \"$CLAUDE_VER\"/" "$CLAUDE_JSON_VOL"
-        fi
-    fi
-fi
-
-# Export OAuth token to bypass login screen on container restart.
-# Claude Code shows the onboarding/login flow even when credentials are
-# valid on the volume. Setting ANTHROPIC_AUTH_TOKEN makes Claude use the
-# token directly, skipping the interactive login.
-if [ -z "$ANTHROPIC_API_KEY" ] && [ -z "$ANTHROPIC_AUTH_TOKEN" ]; then
-    CREDS_FILE="$HOME/.claude/.credentials.json"
-    if [ -f "$CREDS_FILE" ]; then
-        OAUTH_TOKEN=$(node -e "
-            try {
-                const c = JSON.parse(require('fs').readFileSync('$CREDS_FILE','utf8'));
-                const t = c.claudeAiOauth;
-                if (t && t.accessToken && Date.now() < t.expiresAt)
-                    process.stdout.write(t.accessToken);
-            } catch {}
-        " 2>/dev/null || true)
-        if [ -n "$OAUTH_TOKEN" ]; then
-            export ANTHROPIC_AUTH_TOKEN="$OAUTH_TOKEN"
+            sed -i "s/\"lastOnboardingVersion\"[[:space:]]*:[[:space:]]*\"[^\"]*\"/\"lastOnboardingVersion\": \"$CLAUDE_VER\"/" "$CONFIG_FILE"
         fi
     fi
 fi

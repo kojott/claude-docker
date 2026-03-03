@@ -85,6 +85,7 @@ ENV TERM=xterm-256color \
     LC_ALL=en_US.UTF-8 \
     EDITOR=vim \
     NVM_DIR=/home/dev/.nvm \
+    CLAUDE_CONFIG_DIR=/home/dev/.claude \
     PATH=/home/dev/.nvm/versions/node/v24.14.0/bin:/home/dev/bin:/home/dev/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
