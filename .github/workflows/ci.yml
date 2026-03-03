@@ -41,7 +41,7 @@ jobs:
             && echo "PASS: node is available" || { echo "FAIL: node not found"; exit 1; }
 
           # Test: claude CLI is available
-          docker run --rm claude-docker:test bash -lc "claude --version" | grep -q "." \
+          docker run --rm claude-docker:test bash -lc "claude --version" | grep -qE '[0-9]+\.[0-9]+\.[0-9]+' \
             && echo "PASS: claude CLI is available" || { echo "FAIL: claude CLI not found"; exit 1; }
 
           # Test: essential tools available
