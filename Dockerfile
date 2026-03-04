@@ -1,5 +1,7 @@
 FROM debian:bookworm-slim
 
+LABEL org.opencontainers.image.source=https://github.com/kojott/claude-docker
+
 ARG TARGETARCH
 ARG NVM_VERSION=0.40.3
 ARG NODE_VERSION=24
