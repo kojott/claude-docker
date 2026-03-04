@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/kojott/claude-docker/compare/v1.0.1...v1.0.2) (2026-03-04)
+
+
+### Bug Fixes
+
+* add OCI source label for automatic ghcr.io repository linking ([4fd66d8](https://github.com/kojott/claude-docker/commit/4fd66d8850e32d89600def6e4b50d0b0ebc3c327))
+
 ## [1.0.1](https://github.com/kojott/claude-docker/compare/v1.0.0...v1.0.1) (2026-03-03)
 
 
