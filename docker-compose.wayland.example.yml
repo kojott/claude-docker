@@ -1,0 +1,10 @@
+# Wayland clipboard support (Linux only)
+# Copy to docker-compose.override.yml to activate.
+services:
+  claude:
+    environment:
+      - CLIPBOARD_BACKEND=wayland
+      - WAYLAND_DISPLAY=${WAYLAND_DISPLAY}
+      - XDG_RUNTIME_DIR=/run/user/1000
+    volumes:
+      - ${XDG_RUNTIME_DIR:-/run/user/1000}/${WAYLAND_DISPLAY}:/run/user/1000/${WAYLAND_DISPLAY}:ro

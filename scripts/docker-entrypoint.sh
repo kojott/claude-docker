@@ -50,6 +50,39 @@ if [ -n "$GIT_USER_EMAIL" ]; then
     git config --global user.email "$GIT_USER_EMAIL"
 fi
 
+# Clipboard backend setup (default: osc52, no action needed)
+case "${CLIPBOARD_BACKEND:-osc52}" in
+    x11)
+        if [ -n "$DISPLAY" ] && [ -e "/tmp/.X11-unix/X${DISPLAY#*:}" ] 2>/dev/null; then
+            if ! command -v xclip >/dev/null 2>&1; then
+                echo "Installing xclip for X11 clipboard..."
+                sudo apt-get update -qq && sudo apt-get install -y -qq xclip > /dev/null 2>&1
+            fi
+        else
+            echo "Warning: CLIPBOARD_BACKEND=x11 but DISPLAY not set or X11 socket not mounted."
+            echo "See docker-compose.x11.example.yml for setup instructions."
+        fi
+        ;;
+    wayland)
+        if [ -n "$WAYLAND_DISPLAY" ]; then
+            if ! command -v wl-copy >/dev/null 2>&1; then
+                echo "Installing wl-clipboard for Wayland..."
+                sudo apt-get update -qq && sudo apt-get install -y -qq wl-clipboard > /dev/null 2>&1
+            fi
+        else
+            echo "Warning: CLIPBOARD_BACKEND=wayland but WAYLAND_DISPLAY not set."
+            echo "See docker-compose.wayland.example.yml for setup instructions."
+        fi
+        ;;
+    osc52|"")
+        # Default: tmux config handles everything via OSC 52
+        ;;
+    *)
+        echo "Warning: Unknown CLIPBOARD_BACKEND='$CLIPBOARD_BACKEND'. Valid values: osc52, x11, wayland."
+        echo "Falling back to osc52 (default)."
+        ;;
+esac
+
 # GitHub CLI auth if token provided
 if [ -n "$GITHUB_TOKEN" ]; then
     echo "$GITHUB_TOKEN" | gh auth login --with-token 2>/dev/null || true

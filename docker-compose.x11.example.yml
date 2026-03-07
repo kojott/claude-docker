@@ -1,0 +1,11 @@
+# X11 clipboard support (Linux only)
+# Copy to docker-compose.override.yml to activate.
+# WARNING: X11 socket mount grants container access to your display server.
+# A malicious process could capture keystrokes or screenshots.
+services:
+  claude:
+    environment:
+      - CLIPBOARD_BACKEND=x11
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
