@@ -20,6 +20,7 @@ NC='\033[0m'
 # ============================================================================
 
 install_python() {
+    command -v python3 >/dev/null 2>&1 && { echo -e "  ${GREEN}Python already installed${NC}"; return 0; }
     echo -e "  Installing Python 3..."
     sudo apt-get update -qq
     sudo apt-get install -y -qq python3 python3-pip python3-venv > /dev/null 2>&1
@@ -27,6 +28,7 @@ install_python() {
 }
 
 install_go() {
+    command -v go >/dev/null 2>&1 && { echo -e "  ${GREEN}Go already installed${NC}"; return 0; }
     echo -e "  Installing Go..."
     local goarch
     goarch=$(dpkg --print-architecture)
@@ -38,6 +40,7 @@ install_go() {
 }
 
 install_rust() {
+    command -v rustc >/dev/null 2>&1 && { echo -e "  ${GREEN}Rust already installed${NC}"; return 0; }
     echo -e "  Installing Rust..."
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y > /dev/null 2>&1
     . "$HOME/.cargo/env"
@@ -45,6 +48,7 @@ install_rust() {
 }
 
 install_bun() {
+    command -v bun >/dev/null 2>&1 && { echo -e "  ${GREEN}Bun already installed${NC}"; return 0; }
     echo -e "  Installing Bun..."
     curl -fsSL https://bun.sh/install | bash > /dev/null 2>&1
     export PATH="$HOME/.bun/bin:$PATH"
@@ -52,6 +56,7 @@ install_bun() {
 }
 
 install_php() {
+    command -v php >/dev/null 2>&1 && { echo -e "  ${GREEN}PHP already installed${NC}"; return 0; }
     echo -e "  Installing PHP + Composer..."
     sudo apt-get update -qq
     sudo apt-get install -y -qq php-cli php-mbstring php-xml php-curl > /dev/null 2>&1
@@ -62,6 +67,7 @@ install_php() {
 }
 
 install_ruby() {
+    command -v ruby >/dev/null 2>&1 && { echo -e "  ${GREEN}Ruby already installed${NC}"; return 0; }
     echo -e "  Installing Ruby + Bundler..."
     sudo apt-get update -qq
     sudo apt-get install -y -qq ruby ruby-dev > /dev/null 2>&1
@@ -70,6 +76,7 @@ install_ruby() {
 }
 
 install_java() {
+    command -v java >/dev/null 2>&1 && { echo -e "  ${GREEN}Java already installed${NC}"; return 0; }
     echo -e "  Installing Java (OpenJDK 17)..."
     sudo apt-get update -qq
     sudo apt-get install -y -qq openjdk-17-jdk-headless > /dev/null 2>&1
@@ -77,21 +84,25 @@ install_java() {
 }
 
 install_vim() {
+    command -v vim >/dev/null 2>&1 && { echo -e "  ${GREEN}vim already installed${NC}"; return 0; }
     sudo apt-get install -y -qq vim > /dev/null 2>&1
     echo -e "  ${GREEN}vim installed${NC}"
 }
 
 install_htop() {
+    command -v htop >/dev/null 2>&1 && { echo -e "  ${GREEN}htop already installed${NC}"; return 0; }
     sudo apt-get install -y -qq htop > /dev/null 2>&1
     echo -e "  ${GREEN}htop installed${NC}"
 }
 
 install_ripgrep() {
+    command -v rg >/dev/null 2>&1 && { echo -e "  ${GREEN}ripgrep already installed${NC}"; return 0; }
     sudo apt-get install -y -qq ripgrep > /dev/null 2>&1
     echo -e "  ${GREEN}ripgrep installed${NC}"
 }
 
 install_gh() {
+    command -v gh >/dev/null 2>&1 && { echo -e "  ${GREEN}GitHub CLI already installed${NC}"; return 0; }
     echo -e "  Installing GitHub CLI..."
     (type -p wget >/dev/null || sudo apt-get install wget -y -qq) \
         && sudo mkdir -p -m 755 /etc/apt/keyrings \
@@ -106,31 +117,37 @@ install_gh() {
 }
 
 install_fzf() {
+    command -v fzf >/dev/null 2>&1 && { echo -e "  ${GREEN}fzf already installed${NC}"; return 0; }
     sudo apt-get install -y -qq fzf > /dev/null 2>&1
     echo -e "  ${GREEN}fzf installed${NC}"
 }
 
 install_bat() {
+    command -v batcat >/dev/null 2>&1 && { echo -e "  ${GREEN}bat already installed${NC}"; return 0; }
     sudo apt-get install -y -qq bat > /dev/null 2>&1
     echo -e "  ${GREEN}bat installed${NC}"
 }
 
 install_nginx() {
+    command -v nginx >/dev/null 2>&1 && { echo -e "  ${GREEN}nginx already installed${NC}"; return 0; }
     sudo apt-get install -y -qq nginx > /dev/null 2>&1
     echo -e "  ${GREEN}nginx installed${NC}"
 }
 
 install_postgresql_client() {
+    command -v psql >/dev/null 2>&1 && { echo -e "  ${GREEN}PostgreSQL client already installed${NC}"; return 0; }
     sudo apt-get install -y -qq postgresql-client > /dev/null 2>&1
     echo -e "  ${GREEN}PostgreSQL client installed${NC}"
 }
 
 install_redis_tools() {
+    command -v redis-cli >/dev/null 2>&1 && { echo -e "  ${GREEN}Redis tools already installed${NC}"; return 0; }
     sudo apt-get install -y -qq redis-tools > /dev/null 2>&1
     echo -e "  ${GREEN}Redis tools installed${NC}"
 }
 
 install_sqlite3() {
+    command -v sqlite3 >/dev/null 2>&1 && { echo -e "  ${GREEN}SQLite3 already installed${NC}"; return 0; }
     sudo apt-get install -y -qq sqlite3 libsqlite3-dev > /dev/null 2>&1
     echo -e "  ${GREEN}SQLite3 installed${NC}"
 }
@@ -304,7 +321,8 @@ text_fallback_wizard() {
 
     echo -e "  ${BOLD}CLAUDE PLUGINS${NC} (superpowers,context7 recommended)"
     echo "    superpowers, context7, playwright, frontend-design,"
-    echo "    code-review, code-simplifier, claude-mem, docu-optimizer"
+    echo "    code-review, code-simplifier, claude-mem, docu-optimizer,"
+    echo "    feature-dev, security-guidance"
     echo -n "  > "
     read -r plugins_input
 
@@ -359,12 +377,14 @@ run_wizard() {
             "sqlite3"           "SQLite3" OFF \
             "superpowers" "Claude plugin: superpowers (recommended)" ON \
             "context7"    "Claude plugin: context7 docs (recommended)" ON \
-            "playwright"  "Claude plugin: browser automation" OFF \
-            "frontend-design" "Claude plugin: frontend design" OFF \
-            "code-review"     "Claude plugin: code review" OFF \
-            "code-simplifier" "Claude plugin: code simplifier" OFF \
-            "claude-mem"      "Claude plugin: persistent memory" OFF \
-            "docu-optimizer"  "Claude plugin: docs optimizer" OFF \
+            "playwright"  "Claude plugin: browser automation" ON \
+            "frontend-design" "Claude plugin: frontend design" ON \
+            "code-review"     "Claude plugin: code review" ON \
+            "code-simplifier" "Claude plugin: code simplifier" ON \
+            "claude-mem"      "Claude plugin: persistent memory" ON \
+            "docu-optimizer"  "Claude plugin: docs optimizer" ON \
+            "feature-dev"     "Claude plugin: feature dev workflow" ON \
+            "security-guidance" "Claude plugin: security guidance" ON \
             3>&1 1>&2 2>&3)
 
         local whiptail_exit=$?
@@ -406,7 +426,7 @@ run_wizard() {
             nginx|postgresql-client|redis-tools|sqlite3)
                 selected_web+="$item "
                 ;;
-            superpowers|context7|playwright|frontend-design|code-review|code-simplifier|claude-mem|docu-optimizer)
+            superpowers|context7|playwright|frontend-design|code-review|code-simplifier|claude-mem|docu-optimizer|feature-dev|security-guidance)
                 selected_plugins+="$item "
                 ;;
         esac

@@ -15,6 +15,8 @@ if [ $# -eq 0 ]; then
     echo "  code-simplifier   - Code simplification"
     echo "  claude-mem        - Persistent memory"
     echo "  docu-optimizer    - Documentation optimization"
+    echo "  feature-dev       - Feature development workflow"
+    echo "  security-guidance - Security best practices"
     exit 0
 fi
 

@@ -16,6 +16,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/* \
     && sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
 
+# Preserve apt cache for volume persistence (speeds up runtime reinstalls)
+RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+
 # dev user with passwordless sudo
 RUN useradd -m -s /bin/bash -u 1000 -G sudo dev && \
     echo 'dev ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/dev && \
@@ -61,8 +65,10 @@ RUN cat /tmp/bashrc-additions.sh >> /home/dev/.bashrc && rm /tmp/bashrc-addition
 COPY --chown=dev:dev scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 COPY --chown=dev:dev scripts/init-wizard.sh /usr/local/bin/init-wizard
 COPY --chown=dev:dev scripts/install-plugins.sh /usr/local/bin/install-plugins
+COPY --chown=dev:dev scripts/save-plugins.sh /usr/local/bin/save-plugins
+COPY --chown=dev:dev config/hooks/post-plugin-save.sh /usr/local/bin/post-plugin-save-hook
 COPY --chown=dev:dev scripts/setup-claude-settings.sh /tmp/setup-claude-settings.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh /usr/local/bin/init-wizard /usr/local/bin/install-plugins
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh /usr/local/bin/init-wizard /usr/local/bin/install-plugins /usr/local/bin/save-plugins /usr/local/bin/post-plugin-save-hook
 
 # Final setup - create /work and fix ownership before switching to dev
 USER root

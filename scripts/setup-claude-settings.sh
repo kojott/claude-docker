@@ -11,7 +11,21 @@ cat > "$SETTINGS_FILE" << 'EOF'
 {
   "skipDangerousModePermissionPrompt": true,
   "prefersReducedMotion": true,
-  "spinnerTipsEnabled": false
+  "spinnerTipsEnabled": false,
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/local/bin/post-plugin-save-hook",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
 }
 EOF
 

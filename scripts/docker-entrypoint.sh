@@ -34,6 +34,14 @@ if [ -n "$CONFIG_FILE" ]; then
     fi
 fi
 
+# Ensure hooks configuration in settings.json (for existing volumes after rebuild)
+SETTINGS_FILE="$CLAUDE_CONFIG_DIR/settings.json"
+if [ -f "$SETTINGS_FILE" ] && ! grep -q '"hooks"' "$SETTINGS_FILE" 2>/dev/null; then
+    # Add hooks config before the closing brace
+    HOOKS_JSON='  "hooks": {"PostToolUse": [{"matcher": "Bash", "hooks": [{"type": "command", "command": "/usr/local/bin/post-plugin-save-hook", "timeout": 10}]}]}'
+    sed -i '$s/}$/,\n'"$(echo "$HOOKS_JSON" | sed 's/[\/&]/\\&/g')"'\n}/' "$SETTINGS_FILE"
+fi
+
 # Configure git identity from env vars
 if [ -n "$GIT_USER_NAME" ]; then
     git config --global user.name "$GIT_USER_NAME"
