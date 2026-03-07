@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential make gcc g++ \
     sudo procps less locales \
     whiptail \
-    openssh-client unzip tar gzip xz-utils \
+    openssh-client unzip tar gzip xz-utils xclip \
     && rm -rf /var/lib/apt/lists/* \
     && sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
 

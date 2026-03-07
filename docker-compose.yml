@@ -12,9 +12,11 @@ services:
       - GIT_USER_EMAIL=${GIT_USER_EMAIL:-dev@localhost}
       - CLAUDE_AUTOSTART=${CLAUDE_AUTOSTART:-0}
       - CLAUDE_CONFIG_DIR=/home/dev/.claude
+      - DISPLAY=${DISPLAY}
     volumes:
       - ${PROJECTS_DIR:-./projects}:/work
       - claude-home:/home/dev/.claude
+      - /tmp/.X11-unix:/tmp/.X11-unix
     cap_drop:
       - ALL
     cap_add:
