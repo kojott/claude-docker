@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/kojott/claude-docker/compare/v1.0.2...v1.1.0) (2026-03-07)
+
+
+### Features
+
+* add security-guidance plugin and PostToolUse auto-save hook ([1a4c12a](https://github.com/kojott/claude-docker/commit/1a4c12ae3c93bc8ad8102f12aad4bc4761019f2b))
+
 ## [1.0.2](https://github.com/kojott/claude-docker/compare/v1.0.1...v1.0.2) (2026-03-04)
 
 
