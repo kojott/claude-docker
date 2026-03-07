@@ -17,3 +17,8 @@ export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
 # Aliases
 alias work="cd /work"
+
+# First-run wizard trigger (entrypoint may not run interactively)
+if [ ! -f "$HOME/.claude/.docker-init-done" ] && [ -t 0 ] && [ -t 1 ]; then
+    init-wizard
+fi

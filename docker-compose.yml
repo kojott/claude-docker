@@ -15,6 +15,11 @@ services:
     volumes:
       - ${PROJECTS_DIR:-./projects}:/work
       - claude-home:/home/dev/.claude
+      - cargo-home:/home/dev/.cargo
+      - rustup-home:/home/dev/.rustup
+      - bun-home:/home/dev/.bun
+      - go-home:/usr/local/go
+      - apt-cache:/var/cache/apt
     cap_drop:
       - ALL
     cap_add:
@@ -40,3 +45,8 @@ services:
 
 volumes:
   claude-home:
+  cargo-home:
+  rustup-home:
+  bun-home:
+  go-home:
+  apt-cache:
