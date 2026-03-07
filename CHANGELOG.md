@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.0](https://github.com/kojott/claude-docker/compare/v1.1.0...v1.2.0) (2026-03-07)
+
+
+### Features
+
+* add cross-platform clipboard support via OSC 52 ([47a408d](https://github.com/kojott/claude-docker/commit/47a408d13a5a77d761b2f159d2340506b582d6b4))
+* add runtime volume persistence and bashrc wizard fallback ([3d7099c](https://github.com/kojott/claude-docker/commit/3d7099cf902813ba7f003539fbaffd777276a89a))
+
 ## [1.1.0](https://github.com/kojott/claude-docker/compare/v1.0.2...v1.1.0) (2026-03-07)
 
 
