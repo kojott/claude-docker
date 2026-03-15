@@ -3,7 +3,7 @@
 # Manages Claude CLI sessions inside tmux
 # Part of claude-docker
 
-set -eo pipefail
+set -euo pipefail
 
 # Source NVM if available (needed in Docker where login shell may not be used)
 [ -s "$HOME/.nvm/nvm.sh" ] && . "$HOME/.nvm/nvm.sh"

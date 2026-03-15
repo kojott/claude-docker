@@ -1,7 +1,7 @@
 #!/bin/bash
 # Render Jinja2 templates from remoteclaud into plain bash scripts
 # This is a build helper, not needed at runtime
-set -eo pipefail
+set -euo pipefail
 
 REMOTECLAUD_DIR="${1:-/srv/remoteclaud}"
 OUTPUT_DIR="${2:-/srv/claude-docker/config}"

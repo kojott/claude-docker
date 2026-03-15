@@ -1,6 +1,6 @@
 #!/bin/bash
 # save-plugins - Sync installed Claude plugins to receipts for rebuild persistence
-set -eo pipefail
+set -euo pipefail
 
 RECEIPTS_FILE="$HOME/.claude/.installed-packages.json"
 

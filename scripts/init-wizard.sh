@@ -2,7 +2,7 @@
 # init-wizard.sh - Interactive first-run setup for claude-docker
 # Presents a TUI for selecting runtimes, tools, and plugins to install
 
-set -o pipefail
+set -euo pipefail
 
 MARKER_FILE="$HOME/.claude/.docker-init-done"
 RECEIPTS_FILE="$HOME/.claude/.installed-packages.json"

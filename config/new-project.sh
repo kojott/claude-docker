@@ -1,7 +1,7 @@
 #!/bin/bash
 # Script for creating new project in /work
 
-set -e
+set -euo pipefail
 
 PROJECT_NAME=$1
 SRC_DIR="/work"

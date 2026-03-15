@@ -1,6 +1,6 @@
 #!/bin/bash
 # Write base Claude settings.json
-set -eo pipefail
+set -euo pipefail
 
 SETTINGS_DIR="$HOME/.claude"
 SETTINGS_FILE="$SETTINGS_DIR/settings.json"

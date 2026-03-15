@@ -1,6 +1,6 @@
 #!/bin/bash
 # Docker entrypoint for claude-docker
-set -eo pipefail
+set -euo pipefail
 
 # Source bashrc for PATH setup
 [ -f "$HOME/.bashrc" ] && . "$HOME/.bashrc"

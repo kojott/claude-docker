@@ -12,15 +12,23 @@
 - Key findings: shell script hardening (set -u), documentation gaps, workflow fixes
 - Full findings in research agent output
 
+### 2026-03-15 22:05 — Development: shell script hardening
+- Implemented set -euo pipefail on all 9 shell scripts
+- Fixed: scripts/docker-entrypoint.sh, init-wizard.sh, install-plugins.sh, save-plugins.sh, clip2docker.sh, render-templates.sh, setup-claude-settings.sh, config/cl.sh, config/new-project.sh
+
 ## Approved
 <!-- Approved tasks — IMPLEMENT THESE -->
 
 ### Quick Wins (shell script hardening)
-- [ ] Add `set -uo pipefail` to scripts/docker-entrypoint.sh (line 3 - missing -u)
-- [ ] Add `set -uo pipefail` to scripts/init-wizard.sh (line 5 - missing -u)
-- [ ] Add `set -uo pipefail` to scripts/install-plugins.sh (line 4 - missing -u)
-- [ ] Add `set -uo pipefail` to scripts/save-plugins.sh (line 3 - missing -u)
-- [ ] Add `set -uo pipefail` to scripts/clip2docker.sh (line 8 - has -u but ensure consistency)
+- [x] Add `set -euo pipefail` to scripts/docker-entrypoint.sh (line 3)
+- [x] Add `set -euo pipefail` to scripts/init-wizard.sh (line 5)
+- [x] Add `set -euo pipefail` to scripts/install-plugins.sh (line 4)
+- [x] Add `set -euo pipefail` to scripts/save-plugins.sh (line 3)
+- [x] Add `set -euo pipefail` to scripts/clip2docker.sh (line 8)
+- [x] Add `set -euo pipefail` to scripts/render-templates.sh (line 4)
+- [x] Add `set -euo pipefail` to scripts/setup-claude-settings.sh (line 3)
+- [x] Add `set -euo pipefail` to config/cl.sh (line 6)
+- [x] Add `set -euo pipefail` to config/new-project.sh (line 4)
 
 ### Documentation fixes
 - [ ] Fix README.md line 690 - incorrect workflow reference (should be release.yml not build-push.yml)

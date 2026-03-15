@@ -1,7 +1,7 @@
 #!/bin/bash
 # Install Claude plugins
 # Usage: install-plugins <plugin1> [plugin2] ...
-set -eo pipefail
+set -euo pipefail
 
 if [ $# -eq 0 ]; then
     echo "Usage: install-plugins <plugin1> [plugin2] ..."
