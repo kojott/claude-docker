@@ -38,3 +38,15 @@ READ THIS FIRST every iteration. Update when you discover something new.
 | `scripts/docker-entrypoint.sh` | Container startup logic |
 | `scripts/init-wizard.sh` | Package selection wizard |
 | `config/cl.sh` | tmux session manager |
+
+## Shell Script Standards
+
+- All scripts MUST use `set -euo pipefail` for robust error handling
+- Missing `-u` (treat unset variables as error) found in multiple scripts
+- Use `#!/bin/bash` not `#!/bin/sh` for bash-specific features
+
+## Documentation Findings
+
+- README.md line 690 references non-existent workflow file
+- Add Docker daemon requirement to troubleshooting
+- Multiple shell scripts lack proper error handling flags
