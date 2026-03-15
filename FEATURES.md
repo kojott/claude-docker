@@ -20,6 +20,13 @@
 - Fixed README.md workflow reference (build-push.yml → release.yml)
 - Added Docker prerequisite notice to troubleshooting section
 
+### 2026-03-15 22:15 — CI/CD pipeline auditor
+- Reviewed .github/workflows/ci.yml and release.yml
+- CI: Well-structured with smoke tests (UID, node, claude CLI, tools, config)
+- Release: Multi-arch build (amd64, arm64) to ghcr.io
+- Found: cache mode=max may be slow; could add build timeout
+- Found: smoke tests could use set -o pipefail for better error handling
+
 ## Approved
 <!-- Approved tasks — IMPLEMENT THESE -->
 
@@ -37,6 +44,10 @@
 ### Documentation fixes
 - [x] Fix README.md line 690 - incorrect workflow reference (should be release.yml not build-push.yml)
 - [x] Add Docker requirement notice to README troubleshooting section
+
+### CI/CD improvements
+- [ ] Add `set -o pipefail` to CI smoke test script in .github/workflows/ci.yml (lines 32-62)
+- [ ] Add build-timeout to CI workflow to prevent hung builds
 
 ## Need Approval
 <!-- Proposals waiting for human approval — DO NOT IMPLEMENT -->
