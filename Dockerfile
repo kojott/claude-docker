@@ -2,6 +2,9 @@ FROM debian:bookworm-slim
 
 LABEL org.opencontainers.image.source=https://github.com/kojott/claude-docker
 
+# Build cache optimization:
+# - GitHub Actions: uses cache-from: type=gha for incremental builds
+# - The apt cache preservation below helps runtime package reinstalls
 ARG TARGETARCH
 ARG NVM_VERSION=0.40.3
 ARG NODE_VERSION=24
@@ -45,6 +48,18 @@ RUN mkdir -p /home/dev/.claude /home/dev/bin && \
 COPY --chown=dev:dev config/cl.sh /home/dev/bin/cl
 COPY --chown=dev:dev config/tmux-cl.conf /home/dev/.tmux-cl.conf
 RUN chmod +x /home/dev/bin/cl
+
+# iTerm2 shell integration + utilities (imgcat, it2copy, it2dl, it2ul)
+# Pinned to commit SHA for reproducible builds; bump SHA to update
+ARG ITERM2_SI_SHA=c5e35df23ad5f1f68117ea36b075f1a9944a57c4
+RUN curl -fsSL "https://raw.githubusercontent.com/gnachman/iTerm2-shell-integration/${ITERM2_SI_SHA}/shell_integration/bash" \
+        -o /home/dev/.iterm2_shell_integration.bash && \
+    mkdir -p /home/dev/.iterm2 && \
+    for util in imgcat it2copy it2dl it2ul; do \
+        curl -fsSL "https://raw.githubusercontent.com/gnachman/iTerm2-shell-integration/${ITERM2_SI_SHA}/utilities/${util}" \
+            -o "/home/dev/.iterm2/${util}"; \
+    done && \
+    chmod +x /home/dev/.iterm2/*
 
 # NVM PATH for login shells (profile.d runs before bashrc)
 USER root
