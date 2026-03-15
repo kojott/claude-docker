@@ -3,33 +3,12 @@
 ## Research Log
 <!-- Format: ### YYYY-MM-DD HH:MM — Perspective: [type] -->
 
-### 2026-03-15 21:45 — Initial bootstrap
-- Agent initialized with Docker-focused perspectives
-
-### 2026-03-15 22:00 — Documentation reviewer
-- Reviewed Dockerfile, docker-compose.yml, scripts/, config/, README, GitHub workflows
-- Identified 20+ improvement opportunities
-- Key findings: shell script hardening (set -u), documentation gaps, workflow fixes
-- Full findings in research agent output
-
-### 2026-03-15 22:05 — Development: shell script hardening
-- Implemented set -euo pipefail on all 9 shell scripts
-- Fixed: scripts/docker-entrypoint.sh, init-wizard.sh, install-plugins.sh, save-plugins.sh, clip2docker.sh, render-templates.sh, setup-claude-settings.sh, config/cl.sh, config/new-project.sh
-
-### 2026-03-15 22:10 — Development: documentation fixes
-- Fixed README.md workflow reference (build-push.yml → release.yml)
-- Added Docker prerequisite notice to troubleshooting section
-
-### 2026-03-15 22:15 — CI/CD pipeline auditor
-- Reviewed .github/workflows/ci.yml and release.yml
-- CI: Well-structured with smoke tests (UID, node, claude CLI, tools, config)
-- Release: Multi-arch build (amd64, arm64) to ghcr.io
-- Found: cache mode=max may be slow; could add build timeout
-- Found: smoke tests could use set -o pipefail for better error handling
-
-### 2026-03-15 22:20 — Development: CI/CD improvements
-- Added set -o pipefail to smoke tests
-- Added 30-minute timeout to CI job
+### Summary (iterations 1-5)
+- Initial bootstrap and documentation review
+- Shell script hardening (set -euo pipefail on all scripts)
+- Documentation fixes (README workflow ref, Docker prerequisite)
+- CI/CD pipeline improvements (pipefail, timeout)
+- Performance optimizations (build cache hints)
 
 ### 2026-03-15 22:25 — Performance reviewer
 - Dockerfile: debian:bookworm-slim base image (good)
@@ -56,6 +35,11 @@
 - config/bashrc-additions.sh: sourced file, no error handling needed
 - config/motd.sh: early returns for non-interactive shells (good)
 - Conclusion: Shell scripts are now well-hardened
+
+### 2026-03-15 22:45 — Housekeeping
+- Trimmed Research Log (kept last 5 entries)
+- No temp files to clean
+- Project in excellent shape
 
 ## Approved
 <!-- Approved tasks — IMPLEMENT THESE -->
