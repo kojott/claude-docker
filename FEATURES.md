@@ -51,6 +51,12 @@
 - docker-compose.yml: cap_add list needed for dev functionality (acceptable)
 - Findings: All security best practices followed
 
+### 2026-03-15 22:40 — Shell script auditor
+- All 9 shell scripts now use set -euo pipefail (verified)
+- config/bashrc-additions.sh: sourced file, no error handling needed
+- config/motd.sh: early returns for non-interactive shells (good)
+- Conclusion: Shell scripts are now well-hardened
+
 ## Approved
 <!-- Approved tasks — IMPLEMENT THESE -->
 
