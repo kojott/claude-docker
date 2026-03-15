@@ -43,6 +43,14 @@
 - Added build cache hints to Dockerfile
 - Dockerfile already well-optimized (no layer combining needed)
 
+### 2026-03-15 22:35 — Docker security auditor
+- Dockerfile: debian:bookworm-slim (minimal, good)
+- Dockerfile: non-root user dev with UID 1000 (good)
+- Dockerfile: uses --no-install-recommends (minimal packages, good)
+- docker-compose.yml: cap_drop: ALL (good security)
+- docker-compose.yml: cap_add list needed for dev functionality (acceptable)
+- Findings: All security best practices followed
+
 ## Approved
 <!-- Approved tasks — IMPLEMENT THESE -->
 
