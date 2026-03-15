@@ -30,6 +30,7 @@ jobs:
 
       - name: Smoke tests
         run: |
+          set -o pipefail
           echo "=== Running smoke tests ==="
 
           # Test: dev user exists with UID 1000

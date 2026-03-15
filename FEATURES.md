@@ -27,6 +27,10 @@
 - Found: cache mode=max may be slow; could add build timeout
 - Found: smoke tests could use set -o pipefail for better error handling
 
+### 2026-03-15 22:20 — Development: CI/CD improvements
+- Added set -o pipefail to smoke tests
+- Added 30-minute timeout to CI job
+
 ## Approved
 <!-- Approved tasks — IMPLEMENT THESE -->
 
@@ -46,8 +50,8 @@
 - [x] Add Docker requirement notice to README troubleshooting section
 
 ### CI/CD improvements
-- [ ] Add `set -o pipefail` to CI smoke test script in .github/workflows/ci.yml (lines 32-62)
-- [ ] Add build-timeout to CI workflow to prevent hung builds
+- [x] Add `set -o pipefail` to CI smoke test script in .github/workflows/ci.yml (lines 32-62)
+- [x] Add build-timeout to CI workflow to prevent hung builds (30 min)
 
 ## Need Approval
 <!-- Proposals waiting for human approval — DO NOT IMPLEMENT -->
