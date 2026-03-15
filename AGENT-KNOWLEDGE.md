@@ -47,11 +47,12 @@ READ THIS FIRST every iteration. Update when you discover something new.
 
 ## Documentation Findings
 
-- README.md line 690 references non-existent workflow file
-- Add Docker daemon requirement to troubleshooting
-- Multiple shell scripts lack proper error handling flags
+- README.md line 690 references non-existent workflow file (FIXED: changed to release.yml)
+- Add Docker daemon requirement to troubleshooting (FIXED: added prerequisite notice)
+- Multiple shell scripts lack proper error handling flags (FIXED: all scripts now use set -euo pipefail)
 
 ## Implemented Changes
 
 - Shell script hardening complete: all 9 scripts now use `set -euo pipefail`
 - Fixed scripts: docker-entrypoint.sh, init-wizard.sh, install-plugins.sh, save-plugins.sh, clip2docker.sh, render-templates.sh, setup-claude-settings.sh, cl.sh, new-project.sh
+- Documentation fixes: README workflow reference corrected, Docker prerequisite added

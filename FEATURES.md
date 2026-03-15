@@ -16,6 +16,10 @@
 - Implemented set -euo pipefail on all 9 shell scripts
 - Fixed: scripts/docker-entrypoint.sh, init-wizard.sh, install-plugins.sh, save-plugins.sh, clip2docker.sh, render-templates.sh, setup-claude-settings.sh, config/cl.sh, config/new-project.sh
 
+### 2026-03-15 22:10 — Development: documentation fixes
+- Fixed README.md workflow reference (build-push.yml → release.yml)
+- Added Docker prerequisite notice to troubleshooting section
+
 ## Approved
 <!-- Approved tasks — IMPLEMENT THESE -->
 
@@ -31,8 +35,8 @@
 - [x] Add `set -euo pipefail` to config/new-project.sh (line 4)
 
 ### Documentation fixes
-- [ ] Fix README.md line 690 - incorrect workflow reference (should be release.yml not build-push.yml)
-- [ ] Add Docker requirement notice to README troubleshooting section
+- [x] Fix README.md line 690 - incorrect workflow reference (should be release.yml not build-push.yml)
+- [x] Add Docker requirement notice to README troubleshooting section
 
 ## Need Approval
 <!-- Proposals waiting for human approval — DO NOT IMPLEMENT -->

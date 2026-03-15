@@ -577,8 +577,11 @@ The container shell has these pre-configured:
 
 ## Troubleshooting
 
+**Prerequisite:** Docker must be installed and running on your host machine before starting the container.
+
 | Problem | Solution |
 |---------|----------|
+| `docker: command not found` / "Docker not running" | Install Docker Desktop (or Docker Engine on Linux) and ensure the daemon is running |
 | `claude: command not found` | Run `. ~/.nvm/nvm.sh` to load Node.js |
 | Login/onboarding screen after rebuild | Check `CLAUDE_CONFIG_DIR` is set: `echo $CLAUDE_CONFIG_DIR` should show `/home/dev/.claude`. If not, add it to your `docker-compose.yml` environment section |
 | "Configuration file not found" warning | Run `cp ~/.claude/backups/.claude.json.backup.* ~/.claude/.claude.json` to restore from Claude's automatic backup |
@@ -687,7 +690,7 @@ This pushes to `ghcr.io/kojott/claude-docker:v1.0.0` and `ghcr.io/kojott/claude-
 | `scripts/init-wizard.sh` | Interactive package selection wizard |
 | `scripts/install-plugins.sh` | Claude plugin installer |
 | `scripts/setup-claude-settings.sh` | Base Claude settings writer |
-| `.github/workflows/build-push.yml` | CI/CD multi-arch build to ghcr.io |
+| `.github/workflows/release.yml` | CI/CD multi-arch build to ghcr.io |
 
 ## License
 
