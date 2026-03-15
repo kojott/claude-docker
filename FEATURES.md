@@ -31,6 +31,14 @@
 - Added set -o pipefail to smoke tests
 - Added 30-minute timeout to CI job
 
+### 2026-03-15 22:25 — Performance reviewer
+- Dockerfile: debian:bookworm-slim base image (good)
+- Dockerfile: apt cache preservation for runtime reinstalls (good)
+- Dockerfile: Node version hardcoded in PATH (could be dynamic)
+- docker-compose.yml: Has memory/CPU limits (good)
+- docker-compose.yml: Has runtime volumes for cargo, rustup, bun, go, apt-cache (good)
+- Opportunities: combine RUN layers, add build cache hints
+
 ## Approved
 <!-- Approved tasks — IMPLEMENT THESE -->
 
@@ -52,6 +60,10 @@
 ### CI/CD improvements
 - [x] Add `set -o pipefail` to CI smoke test script in .github/workflows/ci.yml (lines 32-62)
 - [x] Add build-timeout to CI workflow to prevent hung builds (30 min)
+
+### Performance optimizations
+- [ ] Add build cache hints to Dockerfile comments for GitHub Actions
+- [ ] Combine RUN layers in Dockerfile where possible
 
 ## Need Approval
 <!-- Proposals waiting for human approval — DO NOT IMPLEMENT -->
