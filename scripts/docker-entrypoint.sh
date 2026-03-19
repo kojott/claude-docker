@@ -84,7 +84,7 @@ case "${CLIPBOARD_BACKEND:-osc52}" in
 esac
 
 # GitHub CLI auth if token provided
-if [ -n "$GITHUB_TOKEN" ]; then
+if [ -n "${GITHUB_TOKEN:-}" ]; then
     echo "$GITHUB_TOKEN" | gh auth login --with-token 2>/dev/null || true
 fi
 
