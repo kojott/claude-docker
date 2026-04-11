@@ -11,6 +11,7 @@ RECEIPTS_FILE="$HOME/.claude/.installed-packages.json"
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
 BOLD='\033[1m'
 DIM='\033[2m'
 NC='\033[0m'
@@ -561,7 +562,7 @@ main() {
     mkdir -p "$HOME/.claude"
 
     # Silent mode (--silent flag or called from entrypoint for reinstall)
-    if [ "$1" = "--silent" ]; then
+    if [ "${1:-}" = "--silent" ]; then
         if [ -f "$RECEIPTS_FILE" ]; then
             silent_reinstall
         fi
@@ -569,7 +570,7 @@ main() {
     fi
 
     # Force mode (--force flag, user wants to re-run wizard)
-    if [ "$1" = "--force" ]; then
+    if [ "${1:-}" = "--force" ]; then
         run_wizard
         return
     fi
