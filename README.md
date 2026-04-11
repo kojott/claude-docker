@@ -7,6 +7,7 @@ Works on Linux, macOS, and Windows (via Docker Desktop).
 ## Table of Contents
 
 - [Quick Start](#quick-start)
+- [Multi-Instance Mode](#multi-instance-mode)
 - [How It Works](#how-it-works)
 - [Installation](#installation)
 - [Configuration (.env)](#configuration)
@@ -34,6 +35,65 @@ docker exec -it claude-dev bash
 ```
 
 On first connect, the **init wizard** appears — select your runtimes (Python, Go, Rust, etc.), dev tools, and Claude plugins. Everything installs inside the container.
+
+## Multi-Instance Mode
+
+Run Claude over **any folder** — and run multiple instances side by side, each fully isolated.
+
+### Launch Scripts
+
+Two launcher scripts are included: `claude.sh` (Anthropic API) and `minimax.sh` (MiniMax API).
+
+```bash
+# Start Claude (Anthropic) over a specific project
+./claude.sh ~/projects/my-app
+
+# Start another instance over a different folder (runs in parallel)
+./claude.sh ~/projects/other-app
+
+# Start MiniMax over a folder
+./minimax.sh ~/projects/my-app
+
+# List running instances
+./claude.sh list
+./minimax.sh list
+
+# Stop a specific instance
+./claude.sh stop ~/projects/my-app
+```
+
+### How It Works
+
+Each folder gets a **unique instance name** derived from the folder name (e.g. `~/projects/my-app` → `claude-my-app`). Each instance gets:
+
+- Its own container (named `claude-<folder>` or `minimax-<folder>`)
+- Its own Docker volumes (config, caches — fully isolated)
+- The project folder mounted at `/work` inside the container
+
+Instances don't share state. You can run as many as your machine can handle.
+
+### Prerequisites
+
+- The image must be built first: `docker compose build` (one-time)
+- `claude.sh` reads config from `.env` (API key, git identity, etc.)
+- `minimax.sh` reads config from `.env.minimax` (MiniMax API key, model)
+
+### Detaching vs. Stopping
+
+When attached to an instance:
+- **Detach** (`Ctrl+P, Ctrl+Q`): The container keeps running in the background. Re-attach with `docker attach <instance-name>`.
+- **Stop** (`./claude.sh stop <path>`): Shuts down the container. Volumes (auth, settings) are preserved for next start.
+
+### Quick Reference
+
+| Command | Description |
+|---------|-------------|
+| `./claude.sh <path>` | Start Anthropic Claude over folder |
+| `./minimax.sh <path>` | Start MiniMax Claude over folder |
+| `./claude.sh list` | Show running Anthropic instances |
+| `./minimax.sh list` | Show running MiniMax instances |
+| `./claude.sh stop <path>` | Stop an Anthropic instance |
+| `./minimax.sh stop <path>` | Stop a MiniMax instance |
 
 ## How It Works
 
@@ -620,7 +680,9 @@ docker build -t my-claude -f Dockerfile.custom .
 
 ### Multiple Project Directories
 
-Mount additional directories in `docker-compose.yml`:
+The recommended way to work with multiple projects is the [Multi-Instance Mode](#multi-instance-mode) — run `./claude.sh <path>` for each project. Each gets its own isolated container.
+
+Alternatively, mount additional directories in `docker-compose.yml`:
 
 ```yaml
 volumes:
@@ -679,7 +741,10 @@ This pushes to `ghcr.io/kojott/claude-docker:v1.0.0` and `ghcr.io/kojott/claude-
 |------|-------------|
 | `Dockerfile` | Image definition (debian:bookworm-slim + NVM + Claude Code) |
 | `docker-compose.yml` | Container orchestration with security, resources, ports |
+| `docker-compose.minimax.yml` | MiniMax API variant (separate volumes, auto-start) |
 | `.env.example` | Configuration template |
+| `claude.sh` | Multi-instance launcher (Anthropic API) |
+| `minimax.sh` | Multi-instance launcher (MiniMax API) |
 | `config/cl.sh` | `cl` tmux session manager |
 | `config/tmux-cl.conf` | tmux configuration for cl sessions |
 | `config/motd.sh` | Login message showing active sessions |

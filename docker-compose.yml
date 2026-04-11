@@ -2,8 +2,8 @@ services:
   claude:
     build: .
     image: ghcr.io/kojott/claude-docker:latest
-    container_name: claude-dev
-    hostname: claude-dev
+    container_name: ${CONTAINER_NAME:-claude-dev}
+    hostname: ${CONTAINER_NAME:-claude-dev}
     stdin_open: true
     tty: true
     env_file: .env
